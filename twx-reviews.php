@@ -17,14 +17,14 @@ if ( !function_exists( 'add_action' ) ) {
 	exit;
 }
 
-define( 'REVIEWS_VERSION', '1.0' );
-define( 'REVIEWS__MINIMUM_WP_VERSION', '3.7' );
-define( 'REVIEWS__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'REVIEWS_DELETE_LIMIT', 100000 );
+define( 'TWX_REVIEWS_VERSION', '1.0' );
+define( 'TWX_REVIEWS__MINIMUM_WP_VERSION', '3.7' );
+define( 'TWX_REVIEWS__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'TWX_REVIEWS_DELETE_LIMIT', 100000 );
 
 //This plugin requires the plugin Advanced Custom Fields to work. Check if ACF is active. If not, display error.
 
-function sample_admin_notice__success() {
+function reviews_sample_admin_notice__success() {
     $acf_active = is_plugin_active( 'advanced-custom-fields/acf.php' );
     if ( false === $acf_active ) {
 ?>
@@ -37,7 +37,7 @@ function sample_admin_notice__success() {
     }
 }
 
-add_action( 'admin_notices', 'sample_admin_notice__success' );
+add_action( 'admin_notices', 'reviews_sample_admin_notice__success' );
 
 //enqueue style.css
 function reg_reviews_styles() {
@@ -85,38 +85,44 @@ add_action( 'init', 'reviews_init' );
 function review_table_head($defaults)
 {
     //add columns
-    $defaults['order'] = 'Order';
-    $defaults['modified'] = 'Last Modified';
+   // $defaults['order'] = 'Order';
+    $defaults['name'] = 'Name';
+    $defaults['email'] = 'Email';
+    $defaults['review'] = 'Review';
+    $defaults['rating'] = 'Rating';
     return $defaults;
 }
 
 add_filter('manage_reviews_posts_columns', 'review_table_head');
 
 //function for custom columns
-function populate_custom_columns($column, $post_id) {
+function populate_reviews_custom_columns($column, $post_id) {
 
-    // http://andrewnorcross.com/tutorials/modified-date-display/
-    // popluates the modified column to provide the name of the last editor, date and time.
-    if ($column == 'modified') {
-        $m_orig    = get_post_field('post_modified', $post_id, 'raw');
-        $m_stamp   = strtotime($m_orig);
-        $modified  = date('n/j/y @ g:i a', $m_stamp);
-        $modr_id   = get_post_meta($post_id, '_edit_last', true);
-        $auth_id   = get_post_field('post_author', $post_id, 'raw');
-        $user_id   = !empty($modr_id) ? $modr_id : $auth_id;
-        $user_info = get_userdata($user_id);
-        echo '<p class="mod-date">';
-        echo '<em>' . $modified . '</em><br />';
-        echo 'by <strong>' . $user_info->display_name . '<strong>';
-        echo '</p>';
-    }
-    if ($column == 'order') {
+
+   /* if ($column == 'order') {
         $order = get_post_field('menu_order', $post_id, 'raw');
         echo '<p>' . $order . '</p>';
+    }*/
+    if ($column == 'name') {
+        $name = get_field('first_name', $post_id, 'raw');
+        echo '<p>' . $name . '</p>';
+    }
+    if ($column == 'email') {
+        $email = get_field('email', $post_id, 'raw');
+        echo '<p>' . $email . '</p>';
+    }
+    if ($column == 'review') {
+        $review = get_the_excerpt($post_id);
+        echo '<p>' . $review . '</p>';
+    }
+    if ($column == 'rating') {
+        $rating = get_field('rating', $post_id, 'raw');
+        echo '<p>' . $rating . '</p>';
     }
 }
 
-add_action('manage_reviews_posts_custom_column', 'populate_custom_columns', 10, 2);
+
+add_action('manage_reviews_posts_custom_column', 'populate_reviews_custom_columns', 10, 2);
 
 /*
  * Display a custom taxonomy dropdown in admin
@@ -137,7 +143,7 @@ function tsm_reviews_filter_post_type_by_taxonomy() {
 			'name'            => $taxonomy,
 			'orderby'         => 'name',
 			'selected'        => $selected,
-			'show_count'      => true,
+			'show_count'      => false,
 			'hide_empty'      => true,
 		));
 	};
@@ -159,7 +165,7 @@ function tsm_reviews_convert_id_to_term_in_query($query) {
 	}
 }
 
-require_once( REVIEWS__PLUGIN_DIR . 'shortcode.php' );
+require_once( TWX_REVIEWS__PLUGIN_DIR . 'reviews_shortcode.php' );
 
 add_action( 'template_redirect', 'reviews_redirect_post' );
 

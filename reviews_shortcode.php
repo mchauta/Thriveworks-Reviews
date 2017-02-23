@@ -1,12 +1,12 @@
 <?php
 
 //Register shortcodes
-function register_shortcodes() {
+function register_reviews_shortcodes() {
     add_shortcode('providers', 'shortcode_providers');
 }
-add_action('init', 'register_shortcodes');
+add_action('init', 'register_reviews_shortcodes');
 
-//run loop in shortcode
+/*run loop in shortcode
 function shortcode_providers($atts) {
     global $loop;
 
@@ -210,3 +210,4 @@ function shortcode_providers($atts) {
     }
     return $content;
 }
+*/
