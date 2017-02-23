@@ -90,6 +90,7 @@ function review_table_head($defaults)
     $defaults['email'] = 'Email';
     $defaults['review'] = 'Review';
     $defaults['rating'] = 'Rating';
+    $defaults['approved'] = 'Approval';
     return $defaults;
 }
 
@@ -118,6 +119,10 @@ function populate_reviews_custom_columns($column, $post_id) {
     if ($column == 'rating') {
         $rating = get_field('rating', $post_id, 'raw');
         echo '<p>' . $rating . '</p>';
+    }
+    if ($column == 'approved') {
+        $approved = get_field('approved', $post_id, 'raw');
+        echo '<p>' . $approved . '</p>';
     }
 }
 
