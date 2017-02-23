@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Reviews
+Plugin Name: Thriveworks Reviews
 Plugin URI: http://thriveworks.com/
 Description: a plugin created to provide review directory functionality to thriveworks.com
 Version: 1.0
