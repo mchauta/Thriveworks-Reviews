@@ -1,8 +1,8 @@
 <?php
 /*
 Plugin Name: Thriveworks Reviews
-Plugin URI: http://thriveworks.com/
-Description: a plugin created to provide review directory functionality to thriveworks.com
+Plugin URI: http://thriveworks.com/reviews
+Description: a plugin created to provide reviews functionality to thriveworks.com
 Version: 1.0
 Author: Matt Chauta
 Author URI: http://chauta.carbonmade.com/
@@ -19,7 +19,7 @@ if ( !function_exists( 'add_action' ) ) {
 
 define( 'REVIEWS_VERSION', '1.0' );
 define( 'REVIEWS__MINIMUM_WP_VERSION', '3.7' );
-define( 'REVIEWS__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+//define( 'REVIEWS__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'REVIEWS_DELETE_LIMIT', 100000 );
 
 //This plugin requires the plugin Advanced Custom Fields to work. Check if ACF is active. If not, display error.
