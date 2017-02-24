@@ -122,7 +122,7 @@ function populate_reviews_custom_columns($column, $post_id) {
     }
     if ($column == 'approved') {
         $approved = get_field('approved', $post_id, 'raw');
-        echo '<a href="' . get_admin_url() . 'edit.php?post_type=reviews&meta_key=' . 'approved' . '&meta_value=' . $approved . '"><p>' . $approved . '</p></a>';
+        echo '<p>' . $approved . '</p>';
     }
 }
 
