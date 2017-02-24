@@ -58,15 +58,33 @@ function shortcode_reviews($atts) {
     while ($loop->have_posts()) {
         $loop->the_post();
         //post content
+        $ID = get_the_ID();
+        $script = '
+        <script>jQuery(function($){
+
+$("#reviews_read_more_link_' . $ID . '").click(function(){
+        $("#reviews_read_more_link_' . $ID . '").hide();
+        $("#reviews_read_more_' . $ID . '").show();
+        $("#reviews_elipses_' . $ID . '").hide();
+    $("#reviews_read_less_link_' . $ID . '").show();
+    });
+    $("#reviews_read_less_link_' . $ID . '").click(function(){
+        $("#reviews_read_less_link_' . $ID . '").hide();
+        $("#reviews_read_more_' . $ID . '").hide();
+        $("#reviews_elipses_' . $ID . '").show();
+        $("#reviews_read_more_link_' . $ID . '").show();
+    });
+});</script>';
             //variables
-            //get terms
+
             $post_content = get_the_content();
             if (strlen($post_content) > 50) {
                 $post_content_first = substr($post_content, 0, 50);
                 $post_content_last = substr($post_content, 50);
-                $post_content = $post_content_first . '<span class="reviews_elipses">...</span><a class="reviews_read_more_link" href="#">Read more</a><span class="reviews_read_more">' . $post_content_last . '</span>';
+                $post_content =  $post_content_first . '<span class="reviews_elipses" id="reviews_elipses_' . $ID . '">...</span><a class="reviews_read_more_link" id="reviews_read_more_link_' . $ID . '" href="#">Read more</a><span class="reviews_read_more" id="reviews_read_more_' . $ID . '">' . $post_content_last . '</span><a class="reviews_read_less_link" id="reviews_read_less_link_' . $ID . '" href="#">Read less</a>';
             }
             $post_content = wpautop( $post_content );
+            $post_content = $script .= $post_content;
             $rating = get_field('rating');
             $name = get_field('first_name');
             $title = get_the_title();

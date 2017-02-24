@@ -241,3 +241,8 @@ function custom_excerpt_length( $length ) {
 	return 20;
 }
 add_filter( 'excerpt_length', 'custom_excerpt_length', 999 );
+
+function reviews_read_more_scripts() {
+    wp_enqueue_script( 'readmorescript', plugins_url( '/js/read-more.js' , __FILE__ ), array( 'jquery' ) );
+}
+add_action( 'wp_enqueue_scripts', 'reviews_read_more_scripts' );
