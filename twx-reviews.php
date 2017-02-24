@@ -43,7 +43,7 @@ add_action( 'admin_notices', 'reviews_sample_admin_notice__success' );
 function reg_reviews_styles() {
     $css_path = get_stylesheet_directory() . '/style.css';
 // Example: /home/user/var/www/wordpress/wp-content/plugins/my-plugin/
-    wp_enqueue_style('reviews-style', '/wp-content/plugins/reviews/css/style.css', array(), filemtime($css_path));
+    wp_enqueue_style('reviews-style', '/wp-content/plugins/twx-reviews/css/style.css', array(), filemtime($css_path));
 }
 add_action('wp_enqueue_scripts', 'reg_reviews_styles');
 
@@ -236,3 +236,8 @@ function reviews_posts_filter( $query ){
         $query->query_vars['meta_value'] = $_GET['ADMIN_FILTER_FIELD_VALUE'];
     }
 }
+
+function custom_excerpt_length( $length ) {
+	return 20;
+}
+add_filter( 'excerpt_length', 'custom_excerpt_length', 999 );

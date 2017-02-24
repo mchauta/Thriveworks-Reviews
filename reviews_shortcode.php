@@ -51,7 +51,9 @@ function shortcode_reviews($atts) {
         return false;
     }
 
-    $content = '<div class="review-group" id="' . $location . '_reviews_container">';
+    $content = '<div class="review-group" id="' . $location . '_reviews_container">
+
+    ';
 
     while ($loop->have_posts()) {
         $loop->the_post();
@@ -59,28 +61,57 @@ function shortcode_reviews($atts) {
             //variables
             //get terms
             $post_content = get_the_content();
+            if (strlen($post_content) > 50) {
+                $post_content_first = substr($post_content, 0, 50);
+                $post_content_last = substr($post_content, 50);
+                $post_content = $post_content_first . '<span class="reviews_elipses">...</span><a class="reviews_read_more_link" href="#">Read more</a><span class="reviews_read_more">' . $post_content_last . '</span>';
+            }
             $post_content = wpautop( $post_content );
             $rating = get_field('rating');
             $name = get_field('first_name');
-            $title = the_title();
+            $title = get_the_title();
+
+        switch ($rating) {
+            case 1:
+                $rating = ★☆☆☆☆;
+                break;
+
+            case 2:
+                $rating = ★★☆☆☆;
+                break;
+
+            case 3:
+                $rating = ★★★☆☆;
+                break;
+
+            case 4:
+                $rating = ★★★★☆;
+                break;
+
+            case 5:
+                $rating = ★★★★★;
+                break;
+        }
 
             //content
             $content = $content .=
                  '<div class="review">
-                 <div class="reviews_title">' .
-                $name .
-                '</div>
+                 <div class="reviews_title"><h3>' .
+                $title .
+                '</h3></div>
                 <div class="reviews_rating">' .
                 $rating .
                 '</div>' .
-                '<div class="reviews_content">' .
-                $post_content . '</div>
-                </div>';
+                '<blockquote class="reviews_content">' .
+                $post_content . '</blockquote>
+                <div class="reviews_name"> - ' .
+                $name . '
+                </div></div>';
 
             wp_reset_postdata();
 
             }
-
+    $content = $content .= '</div>';
+                return $content;
         }
 
-    return $content;
