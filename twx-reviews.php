@@ -204,7 +204,7 @@ function reviews_admin_posts_filter_restrict_manage_posts(){
         );
         ?>
         <select name="ADMIN_FILTER_FIELD_VALUE">
-        <option value=""><?php _e('Filter By ', 'acs'); ?></option>
+        <option value=""><?php _e('Show All Status ', 'acs'); ?></option>
         <?php
             $current_v = isset($_GET['ADMIN_FILTER_FIELD_VALUE'])? $_GET['ADMIN_FILTER_FIELD_VALUE']:'';
             foreach ($values as $label => $value) {
