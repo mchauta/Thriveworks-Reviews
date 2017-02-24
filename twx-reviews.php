@@ -122,7 +122,7 @@ function populate_reviews_custom_columns($column, $post_id) {
     }
     if ($column == 'approved') {
         $approved = get_field('approved', $post_id, 'raw');
-        echo '<p>' . $approved . '</p>';
+        echo '<a href="' . get_admin_url() . 'edit.php?post_type=reviews&meta_key=' . 'approved' . '&meta_value=' . $approved . '"><p>' . $approved . '</p></a>';
     }
 }
 
@@ -153,6 +153,7 @@ function tsm_reviews_filter_post_type_by_taxonomy() {
 		));
 	};
 }
+
 /**
  * Filter posts by taxonomy in admin
  * @author  Mike Hemberger
@@ -183,4 +184,55 @@ function reviews_redirect_post() {
             }
 
         }
+}
+
+add_action( 'restrict_manage_posts', 'reviews_admin_posts_filter_restrict_manage_posts' );
+function reviews_admin_posts_filter_restrict_manage_posts(){
+    $type = 'reviews';
+    if (isset($_GET['post_type'])) {
+        $type = $_GET['post_type'];
+    }
+
+    //only add filter to post type you want
+    if ('reviews' == $type){
+        //change this to the list of values you want to show
+        //in 'label' => 'value' format
+        $values = array(
+			'Pending' => 'Pending',
+			'Approved' => 'Approved',
+			'Rejected' => 'Rejected',
+        );
+        ?>
+        <select name="ADMIN_FILTER_FIELD_VALUE">
+        <option value=""><?php _e('Filter By ', 'acs'); ?></option>
+        <?php
+            $current_v = isset($_GET['ADMIN_FILTER_FIELD_VALUE'])? $_GET['ADMIN_FILTER_FIELD_VALUE']:'';
+            foreach ($values as $label => $value) {
+                printf
+                    (
+                        '<option value="%s"%s>%s</option>',
+                        $value,
+                        $value == $current_v? ' selected="selected"':'',
+                        $label
+                    );
+                }
+        ?>
+        </select>
+        <?php
+    }
+}
+
+
+add_filter( 'parse_query', 'reviews_posts_filter' );
+
+function reviews_posts_filter( $query ){
+    global $pagenow;
+    $type = 'reviews';
+    if (isset($_GET['post_type'])) {
+        $type = $_GET['post_type'];
+    }
+    if ( 'reviews' == $type && is_admin() && $pagenow=='edit.php' && isset($_GET['ADMIN_FILTER_FIELD_VALUE']) && $_GET['ADMIN_FILTER_FIELD_VALUE'] != '') {
+        $query->query_vars['meta_key'] = 'approved';
+        $query->query_vars['meta_value'] = $_GET['ADMIN_FILTER_FIELD_VALUE'];
+    }
 }
