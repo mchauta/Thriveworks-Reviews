@@ -15,10 +15,12 @@ function shortcode_reviews($atts) {
     $atts = shortcode_atts(array(
         'number' => '',
         'location' => '',
+        'provider' => '',
     ), $atts);
 
     $number = $atts['number'];
     $location = $atts['location'];
+    $location = $atts['provider'];
 
     if ('all' == $number) {
         $number = -1;
@@ -42,14 +44,28 @@ function shortcode_reviews($atts) {
             )
         ));
 
-    }  else {
+    }  elseif ($number && $provider) {
+        $loop = new WP_Query(array(
+            'posts_per_page' => $atts['number'],
+            'post_type' => 'reviews',
+            'orderby' => 'date menu_order',
+            'order' => 'ASC',
+            'meta_query' => array(
+		                      array(
+			                     'key'     => 'review_tag',
+			                     'value'   => $atts['location'],
+		              ),
+	               ),
+        ));
+    } else {
         //or if neither exists, display warning/tip
         echo '<p>You must provide a "location" and a "number" parameter.  </p>';
     }
 
 
     if (!$loop->have_posts()) {
-        return false;
+
+        return 'There are currently no reviews.';
     }
 
 
@@ -139,4 +155,3 @@ $("#reviews_read_more_link_' . $ID . '").click(function(){
     $content = $content .= '</div>';
                 return $content;
         }
-
