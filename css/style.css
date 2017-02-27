@@ -7,17 +7,26 @@
 	*/
 
 .review-group {
-
+    display: inline-flex;
 }
-
+@media (max-width: 750px) {
+ .review-group {
+    display: block;
+}
+    .review-group .review {
+    width: 100%;
+    }
+}
 .review-group .review {
     width: 33%;
     display: inline-block;
-    min-width: 300px;
+    min-width: 250px;
 }
 
-.reviews-name {
-text-align: right;
+.reviews_name {
+float: right;
+    font-size: 16px;
+    font-weight: bold;
 }
 
 .reviews_read_more {
@@ -31,7 +40,7 @@ display: none;
     font-size: 14px;
 }
 .reviews_read_less_link {
-    display: block;
+    display: none;
     text-align: center;
     font-size: 14px;
 }

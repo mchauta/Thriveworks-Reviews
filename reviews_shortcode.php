@@ -9,6 +9,7 @@ add_action('init', 'register_reviews_shortcodes');
 //run loop in shortcode
 function shortcode_reviews($atts) {
     global $loop;
+    $i = 1;
 
     //set attributes
     $atts = shortcode_atts(array(
@@ -51,9 +52,6 @@ function shortcode_reviews($atts) {
         return false;
     }
 
-    $content = '<div class="review-group" id="' . $location . '_reviews_container">
-
-    ';
 
     while ($loop->have_posts()) {
         $loop->the_post();
@@ -63,21 +61,26 @@ function shortcode_reviews($atts) {
         <script>jQuery(function($){
 
 $("#reviews_read_more_link_' . $ID . '").click(function(){
-        $("#reviews_read_more_link_' . $ID . '").hide();
+        $("#reviews_read_more_link_' . $ID . '").css("display", "none");
         $("#reviews_read_more_' . $ID . '").show();
         $("#reviews_elipses_' . $ID . '").hide();
-    $("#reviews_read_less_link_' . $ID . '").show();
+    $("#reviews_read_less_link_' . $ID . '").css("display", "block");
     });
     $("#reviews_read_less_link_' . $ID . '").click(function(){
-        $("#reviews_read_less_link_' . $ID . '").hide();
+        $("#reviews_read_less_link_' . $ID . '").css("display", "none");
         $("#reviews_read_more_' . $ID . '").hide();
         $("#reviews_elipses_' . $ID . '").show();
-        $("#reviews_read_more_link_' . $ID . '").show();
+        $("#reviews_read_more_link_' . $ID . '").css("display", "block");
     });
 });</script>';
             //variables
 
             $post_content = get_the_content();
+        if($i % 3 == 1) {
+        $content = $content .= '<div class="review-group" id="' . $i . '_reviews_group">';
+        }
+
+
             if (strlen($post_content) > 50) {
                 $post_content_first = substr($post_content, 0, 50);
                 $post_content_last = substr($post_content, 50);
@@ -125,6 +128,10 @@ $("#reviews_read_more_link_' . $ID . '").click(function(){
                 <div class="reviews_name"> - ' .
                 $name . '
                 </div></div>';
+        if($i % 3 == 0) {
+            $content = $content .= '</div>';
+        }
+        $i++;
 
             wp_reset_postdata();
 
