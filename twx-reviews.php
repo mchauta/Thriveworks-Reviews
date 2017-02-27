@@ -246,3 +246,8 @@ function reviews_read_more_scripts() {
     wp_enqueue_script( 'readmorescript', plugins_url( '/js/read-more.js' , __FILE__ ), array( 'jquery' ) );
 }
 add_action( 'wp_enqueue_scripts', 'reviews_read_more_scripts' );
+add_filter( 'gform_field_value_location', 'location_custom_population_function' );
+function location_custom_population_function( $value ) {
+    $location = get_field('review_tag');
+    return $location;
+}

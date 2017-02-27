@@ -14,7 +14,7 @@
     display: block;
 }
     .review-group .review {
-    width: 100%;
+    width: 100% !important;
     }
 }
 .review-group .review {
@@ -22,7 +22,9 @@
     display: inline-block;
     min-width: 250px;
 }
-
+.review-group {
+    width: 100%;
+}
 .reviews_name {
 float: right;
     font-size: 16px;
@@ -45,3 +47,6 @@ display: none;
     font-size: 14px;
 }
 
+.reviews_rating {
+    text-align: center;
+}
