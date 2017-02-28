@@ -3,6 +3,7 @@
 //Register shortcodes
 function register_reviews_shortcodes() {
     add_shortcode('twx_reviews', 'shortcode_reviews');
+    add_shortcode('twx_reviews_snippet', 'shortcode_reviews_snippet');
 }
 add_action('init', 'register_reviews_shortcodes');
 
@@ -107,10 +108,10 @@ $("#reviews_read_more_link_' . $ID . '").click(function(){
         }
 
 
-            if (strlen($post_content) > 50) {
-                $post_content_first = substr($post_content, 0, 50);
-                $post_content_last = substr($post_content, 50);
-                $post_content =  $post_content_first . '<span class="reviews_elipses" id="reviews_elipses_' . $ID . '">...</span><a class="reviews_read_more_link" id="reviews_read_more_link_' . $ID . '" href="#">Read more</a><span class="reviews_read_more" id="reviews_read_more_' . $ID . '">' . $post_content_last . '</span><a class="reviews_read_less_link" id="reviews_read_less_link_' . $ID . '" href="#">Read less</a>';
+            if (strlen($post_content) > 100) {
+                $post_content_first = substr($post_content, 0, 100);
+                $post_content_last = substr($post_content, 100);
+                $post_content =  $post_content_first . '<span class="reviews_elipses" id="reviews_elipses_' . $ID . '">...</span><a class="reviews_read_more_link" id="reviews_read_more_link_' . $ID . '" href="#reviews_read_more_' . $ID . '">Read more</a><span class="reviews_read_more" id="reviews_read_more_' . $ID . '">' . $post_content_last . '</span><a class="reviews_read_less_link" id="reviews_read_less_link_' . $ID . '" href="#reviews_read_more_link_' . $ID . '">Read less</a>';
             }
             $post_content = wpautop( $post_content );
             $post_content = $script .= $post_content;
@@ -165,3 +166,110 @@ $("#reviews_read_more_link_' . $ID . '").click(function(){
     $content = $content .= '</div>';
                 return $content;
         }
+
+function shortcode_reviews_snippet($atts) {
+    global $snip_loop;
+    $i = 1;
+
+    //set attributes
+    $atts = shortcode_atts(array(
+        'location' => '',
+        'provider' => '',
+    ), $atts);
+
+    $snip_location = $atts['location'];
+    $snip_provider = $atts['provider'];
+
+
+//if the number and location attr exists, display that number of posts from that location
+    if ($snip_location)  {
+    //if both parameters exist
+        //find posts with both taxonomies
+        $snip_loop = new WP_Query(array(
+            'posts_per_page' => -1,
+            'post_type' => 'reviews',
+            'orderby' => 'date menu_order',
+            'order' => 'ASC',
+            'meta_query' => array(
+                array(
+                    'key' => 'approved',
+                    'value' => 'Approved',
+                )),
+            'tax_query' => array(
+                array(
+                    'taxonomy' => 'providers_location',
+                    'field' => 'name',
+                    'terms' => $snip_location,
+                ),
+            )
+        ));
+
+    }  elseif ($snip_provider) {
+        $snip_loop = new WP_Query(array(
+            'posts_per_page' => -1,
+            'post_type' => 'reviews',
+            'orderby' => 'date menu_order',
+            'order' => 'ASC',
+            'meta_query' => array(
+                'relation' => 'AND',
+                array(
+                    'key' => 'review_tag',
+                    'value' => $snip_provider,
+                ),
+                array(
+                    'key' => 'approved',
+                    'value' => 'Approved',
+                ),
+            )
+        ));
+    }
+
+    if (!$snip_loop->have_posts()) {
+
+        return 'There is ';
+    }
+
+$snip_count = $snip_loop->post_count;
+
+    while ($snip_loop->have_posts()) {
+        $snip_loop->the_post();
+        $snip_rating = get_field('rating');
+        $snip_rating_total = $snip_rating_total + $snip_rating;
+}
+    $snip_rating_average = $snip_rating_total / $snip_count;
+    $snip_rating_average = ceil($snip_rating_average);
+     switch ($snip_rating_average) {
+            case 1:
+                $snip_rating_average = ★☆☆☆☆;
+                break;
+
+            case 2:
+                $snip_rating_average = ★★☆☆☆;
+                break;
+
+            case 3:
+                $snip_rating_average = ★★★☆☆;
+                break;
+
+            case 4:
+                $snip_rating_average = ★★★★☆;
+                break;
+
+            case 5:
+                $snip_rating_average = ★★★★★;
+                break;
+        }
+    $type = get_post_type($post->ID);
+                        if ( is_page_template( 'location.php' ) ) {
+                             $snip_content = '<div class="reviews_snippet">' . 'Overall Rating: <span class="snip_reviews_rating">' . $snip_rating_average . '</span> based on <a href="#reviews_container">' . $snip_count . '</a> reviews.</div>';
+                        } elseif ( 'providers' === $type ) {
+                            $snip_content = '<div class="reviews_snippet">' . 'Overall Rating: <span class="snip_reviews_rating">' . $snip_rating_average . '</span> based on <a href="#reviews_' . $post->ID . '">' . $snip_count . '</a> reviews.</div>';
+                        } else {
+                            $parent = wp_get_post_parent_id($post->ID);
+                            $parent = get_permalink($parent);
+                            $snip_content = '<div class="reviews_snippet">' . 'Overall Rating: <span class="snip_reviews_rating">' . $snip_rating_average . '</span> based on <a href="' . $parent . '/#reviews_container">' . $snip_count . '</a> reviews.</div>';
+                        }
+    //$snip_content = '<div class="reviews_snippet">' . 'Overall Rating: <span class="snip_reviews_rating">' . $snip_rating_average . '</span> based on ' . $snip_count . ' reviews.</div>';
+    return $snip_content;
+;
+}
