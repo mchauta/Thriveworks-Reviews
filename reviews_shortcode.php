@@ -225,10 +225,13 @@ function shortcode_reviews_snippet($atts) {
     }
 
     if (!$snip_loop->have_posts()) {
-
-        return 'There is ';
+if ($snip_location)  {
+        return 'There are no reviews for this location. ';
+} elseif ($snip_provider)  {
+    return 'There are no reviews for this provider. <br>
+    Be the <a href="#' . $snip_provider . '">first to review </a>them.';
     }
-
+    }
 $snip_count = $snip_loop->post_count;
 
     while ($snip_loop->have_posts()) {
@@ -259,10 +262,10 @@ $snip_count = $snip_loop->post_count;
                 $snip_rating_average = ★★★★★;
                 break;
         }
-    $type = get_post_type($post->ID);
-                        if ( is_page_template( 'location.php' ) ) {
+
+                        if ( $snip_location ) {
                              $snip_content = '<div class="reviews_snippet">' . 'Overall Rating: <span class="snip_reviews_rating">' . $snip_rating_average . '</span> based on <a href="#reviews_container">' . $snip_count . '</a> reviews.</div>';
-                        } elseif ( 'providers' === $type ) {
+                        } elseif ($snip_provider) {
                             $snip_content = '<div class="reviews_snippet">' . 'Overall Rating: <span class="snip_reviews_rating">' . $snip_rating_average . '</span> based on <a href="#reviews_' . $post->ID . '">' . $snip_count . '</a> reviews.</div>';
                         } else {
                             $parent = wp_get_post_parent_id($post->ID);
