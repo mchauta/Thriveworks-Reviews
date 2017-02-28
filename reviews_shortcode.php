@@ -8,7 +8,7 @@ add_action('init', 'register_reviews_shortcodes');
 
 //run loop in shortcode
 function shortcode_reviews($atts) {
-    global $loop;
+    global $reviews_loop;
     $i = 1;
 
     //set attributes
@@ -18,44 +18,54 @@ function shortcode_reviews($atts) {
         'provider' => '',
     ), $atts);
 
-    $number = $atts['number'];
-    $location = $atts['location'];
-    $location = $atts['provider'];
+    $rev_number = $atts['number'];
+    $rev_location = $atts['location'];
+    $rev_provider = $atts['provider'];
 
-    if ('all' == $number) {
-        $number = -1;
+    if ('all' == $rev_number) {
+        $rev_number = -1;
     }
 
 //if the number and location attr exists, display that number of posts from that location
-    if ($number && $location)  {
+    if ($rev_number && $rev_location)  {
     //if both parameters exist
         //find posts with both taxonomies
-        $loop = new WP_Query(array(
-            'posts_per_page' => $atts['number'],
-            'post_type' => 'reviews',
-            'orderby' => 'date menu_order',
-            'order' => 'ASC',
-            'tax_query' => array(
-                array(
-                    'taxonomy' => 'providers_location',
-                    'field' => 'name',
-                    'terms' => $atts['location'],
-                ),
-            )
-        ));
-
-    }  elseif ($number && $provider) {
-        $loop = new WP_Query(array(
-            'posts_per_page' => $atts['number'],
+        $reviews_loop = new WP_Query(array(
+            'posts_per_page' => $rev_number,
             'post_type' => 'reviews',
             'orderby' => 'date menu_order',
             'order' => 'ASC',
             'meta_query' => array(
-		                      array(
-			                     'key'     => 'review_tag',
-			                     'value'   => $atts['location'],
-		              ),
-	               ),
+                array(
+                    'key' => 'approved',
+                    'value' => 'Approved',
+                )),
+            'tax_query' => array(
+                array(
+                    'taxonomy' => 'providers_location',
+                    'field' => 'name',
+                    'terms' => $rev_location,
+                ),
+            )
+        ));
+
+    }  elseif ($rev_number && $rev_provider) {
+        $reviews_loop = new WP_Query(array(
+            'posts_per_page' => $rev_number,
+            'post_type' => 'reviews',
+            'orderby' => 'date menu_order',
+            'order' => 'ASC',
+            'meta_query' => array(
+                'relation' => 'AND',
+                array(
+                    'key' => 'review_tag',
+                    'value' => $rev_provider,
+                ),
+                array(
+                    'key' => 'approved',
+                    'value' => 'Approved',
+                ),
+            )
         ));
     } else {
         //or if neither exists, display warning/tip
@@ -63,14 +73,14 @@ function shortcode_reviews($atts) {
     }
 
 
-    if (!$loop->have_posts()) {
+    if (!$reviews_loop->have_posts()) {
 
         return 'There are currently no reviews.';
     }
 
 
-    while ($loop->have_posts()) {
-        $loop->the_post();
+    while ($reviews_loop->have_posts()) {
+        $reviews_loop->the_post();
         //post content
         $ID = get_the_ID();
         $script = '
