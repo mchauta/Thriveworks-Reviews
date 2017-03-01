@@ -9,38 +9,42 @@
 .review-group {
     display: inline-flex;
 }
+
 @media (max-width: 750px) {
- .review-group {
-    display: block;
-}
+    .review-group {
+        display: block;
+    }
     .review-group .review {
-    width: 100% !important;
+        width: 100% !important;
     }
 }
+
 .review-group .review {
     width: 33%;
     display: inline-block;
     min-width: 250px;
 }
+
 .review-group {
     width: 100%;
 }
+
 .reviews_name {
-float: right;
+    float: right;
     font-size: 16px;
     font-weight: bold;
 }
 
 .reviews_read_more {
-display: none;
+    display: none;
 }
-
 
 .reviews_read_more_link {
     display: block;
     text-align: center;
     font-size: 14px;
 }
+
 .reviews_read_less_link {
     display: none;
     text-align: center;
@@ -51,6 +55,13 @@ display: none;
     text-align: center;
     color: #ffaf00;
 }
+
 .snip_reviews_rating {
     color: #ffaf00;
+}
+
+.reviews_prov_link {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
 }
