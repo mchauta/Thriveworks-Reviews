@@ -8,20 +8,20 @@ function register_reviews_shortcodes() {
 add_action('init', 'register_reviews_shortcodes');
 
 //run loop in shortcode
-function shortcode_reviews($atts) {
+function shortcode_reviews($rev_atts) {
     global $reviews_loop;
     $i = 1;
 
     //set attributes
-    $atts = shortcode_atts(array(
+    $rev_atts = shortcode_atts(array(
         'number' => '',
         'location' => '',
         'provider' => '',
-    ), $atts);
+    ), $rev_atts);
 
-    $rev_number = $atts['number'];
-    $rev_location = $atts['location'];
-    $rev_provider = $atts['provider'];
+    $rev_number = $rev_atts['number'];
+    $rev_location = $rev_atts['location'];
+    $rev_provider = $rev_atts['provider'];
 
     if ('all' == $rev_number) {
         $rev_number = -1;
@@ -160,25 +160,25 @@ $("#reviews_read_more_link_' . $ID . '").click(function(){
         }
         $i++;
 
-            wp_reset_postdata();
+         //   wp_reset_postdata();
 
             }
     $content = $content .= '</div>';
                 return $content;
         }
 
-function shortcode_reviews_snippet($atts) {
+function shortcode_reviews_snippet($snip_atts) {
     global $snip_loop;
     $i = 1;
 
     //set attributes
-    $atts = shortcode_atts(array(
+    $snip_atts = shortcode_atts(array(
         'location' => '',
         'provider' => '',
-    ), $atts);
+    ), $snip_atts);
 
-    $snip_location = $atts['location'];
-    $snip_provider = $atts['provider'];
+    $snip_location = $snip_atts['location'];
+    $snip_provider = $snip_atts['provider'];
 
 
 //if the number and location attr exists, display that number of posts from that location
@@ -233,6 +233,7 @@ if ($snip_location)  {
     }
     }
 $snip_count = $snip_loop->post_count;
+$snip_provider_id = str_replace(' ', '_', $snip_provider);
 
     while ($snip_loop->have_posts()) {
         $snip_loop->the_post();
@@ -264,13 +265,16 @@ $snip_count = $snip_loop->post_count;
         }
 
                         if ( $snip_location ) {
-                             $snip_content = '<div class="reviews_snippet">' . 'Overall Rating: <span class="snip_reviews_rating">' . $snip_rating_average . '</span> based on <a href="#reviews_container">' . $snip_count . '</a> reviews.</div>';
+                            if (is_page_template('location.php')) {
+                                $parent = wp_get_post_parent_id($post->ID);
+                                $parent = get_permalink($parent);
+                                $snip_content = '<div class="reviews_snippet">' . 'Overall Rating: <span class="snip_reviews_rating">' . $snip_rating_average . '</span> based on <a href="' . $parent . '/#reviews_container">' . $snip_count . '</a> reviews.</div>';
+                            }
+                            else {
+                                $snip_content = '<div class="reviews_snippet">' . 'Overall Rating: <span class="snip_reviews_rating">' . $snip_rating_average . '</span> based on <a href="#reviews_container">' . $snip_count . '</a> reviews.</div>';
+                            }
                         } elseif ($snip_provider) {
-                            $snip_content = '<div class="reviews_snippet">' . 'Overall Rating: <span class="snip_reviews_rating">' . $snip_rating_average . '</span> based on <a href="#reviews_' . $post->ID . '">' . $snip_count . '</a> reviews.</div>';
-                        } else {
-                            $parent = wp_get_post_parent_id($post->ID);
-                            $parent = get_permalink($parent);
-                            $snip_content = '<div class="reviews_snippet">' . 'Overall Rating: <span class="snip_reviews_rating">' . $snip_rating_average . '</span> based on <a href="' . $parent . '/#reviews_container">' . $snip_count . '</a> reviews.</div>';
+                            $snip_content = '<div class="reviews_snippet">' . 'Overall Rating: <span class="snip_reviews_rating">' . $snip_rating_average . '</span> based on <a href="#reviews_' . $snip_provider_id . '">' . $snip_count . '</a> reviews.</div>';
                         }
     //$snip_content = '<div class="reviews_snippet">' . 'Overall Rating: <span class="snip_reviews_rating">' . $snip_rating_average . '</span> based on ' . $snip_count . ' reviews.</div>';
     return $snip_content;
