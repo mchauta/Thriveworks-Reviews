@@ -228,8 +228,8 @@ function shortcode_reviews_snippet($snip_atts) {
 if ($snip_location)  {
         return 'There are no reviews for this location. ';
 } elseif ($snip_provider)  {
-    return 'There are no reviews for this provider. <br>
-    Be the <a href="#' . $snip_provider . '">first to review </a>them.';
+    return '<div class ="review_be_first"> There are no reviews for this provider. <br>
+    Be the <a href="#' . $snip_provider . '">first to review </a>them.</div>';
     }
     }
 $snip_count = $snip_loop->post_count;

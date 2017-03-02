@@ -245,9 +245,31 @@ add_filter( 'excerpt_length', 'custom_excerpt_length', 999 );
 function reviews_read_more_scripts() {
     wp_enqueue_script( 'readmorescript', plugins_url( '/js/read-more.js' , __FILE__ ), array( 'jquery' ) );
 }
-add_action( 'wp_enqueue_scripts', 'reviews_read_more_scripts' );
+/*add_action( 'wp_enqueue_scripts', 'reviews_read_more_scripts' );
 add_filter( 'gform_field_value_location', 'location_custom_population_function' );
 function location_custom_population_function( $value ) {
     $location = get_field('review_tag');
     return $location;
-}
+}*/
+function providers_populate_dropdown_with_posts($form){
+
+    foreach($form['fields'] as &$field){
+
+        if($field['inputType'] != 'select' || strpos($field['cssClass'], 'populate-with-posts') === false)
+            continue;
+
+        $posts = get_posts('numberposts=-1&post_status=publish&post_type=providers');
+
+        // update 'Select a Post' to whatever you'd like the instructive option to be
+        $choices = array(array('text' => 'Select a Provider', 'value' => ' '));
+
+        foreach($posts as $post){
+            $choices[] = array('text' => $post->post_title, 'value' => $post->ID);
+        }
+
+        $field['choices'] = $choices;
+
+    }
+
+    return $form;
+} add_filter('gform_pre_render', 'providers_populate_dropdown_with_posts');
