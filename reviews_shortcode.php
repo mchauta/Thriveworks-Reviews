@@ -181,9 +181,7 @@ function shortcode_reviews_snippet($snip_atts) {
     $snip_provider = $snip_atts['provider'];
 
 
-//if the number and location attr exists, display that number of posts from that location
     if ($snip_location)  {
-    //if both parameters exist
         //find posts with both taxonomies
         $snip_loop = new WP_Query(array(
             'posts_per_page' => -1,
@@ -228,8 +226,9 @@ function shortcode_reviews_snippet($snip_atts) {
 if ($snip_location)  {
         return 'There are no reviews for this location. ';
 } elseif ($snip_provider)  {
+    $snip_provider_format = preg_replace('/\s+/', '_', $snip_provider);
     return '<div class ="review_be_first"> There are no reviews for this provider. <br>
-    Be the <a href="#' . $snip_provider . '">first to review </a>them.</div>';
+    Be the <a href="#rev_prov_' . $snip_provider_format . '">first to review </a>them.</div>';
     }
     }
 $snip_count = $snip_loop->post_count;

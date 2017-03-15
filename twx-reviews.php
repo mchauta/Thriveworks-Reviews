@@ -264,7 +264,8 @@ function providers_populate_dropdown_with_posts($form){
         $choices = array(array('text' => 'Select a Provider', 'value' => ' '));
 
         foreach($posts as $post){
-            $choices[] = array('text' => $post->post_title, 'value' => $post->ID);
+            $review_tag = get_field('review_tag');
+            $choices[] = array('text' => $post->post_title, 'value' => $review_tag);
         }
 
         $field['choices'] = $choices;
@@ -273,3 +274,18 @@ function providers_populate_dropdown_with_posts($form){
 
     return $form;
 } add_filter('gform_pre_render', 'providers_populate_dropdown_with_posts');
+
+add_filter('gform_pre_render_3', 'add_readonly_script');
+function add_readonly_script($form){
+?>
+
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+        /* apply only to a textarea with a class of gf_readonly */
+        jQuery("li.gf_readonly input").attr("readonly","readonly");
+    });
+</script>
+
+<?php
+return $form;
+}
