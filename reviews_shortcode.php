@@ -146,8 +146,10 @@ $("#reviews_read_more_link_' . $ID . '").click(function(){
 
         if ($rev_type== 'provider') {
             $item = $rev_provider;
+            $schema_type = 'Person';
         } else if ($rev_type== 'location') {
-            $item = $rev_location;
+            $item = 'Thriveworks Counseling ' . $rev_location;
+            $schema_type = 'LocalBusiness';
         }
             //content
             $content = $content .=
@@ -155,7 +157,7 @@ $("#reviews_read_more_link_' . $ID . '").click(function(){
                  <meta itemprop="datePublished" content="' . $published . '">
                  <meta itemprop="worstRating" content="1">
                  <meta itemprop="bestRating" content="5">
-                 <span style="display:none;" itemprop="itemReviewed" itemscope itemtype="http://schema.org/Person">' . $item . '</span>
+                 <span style="display:none;" itemprop="itemReviewed" itemscope itemtype="http://schema.org/' . $schema_type . '">' . $item . '</span>
                  <div itemprop="name" class="reviews_title"><h3>' .
                 $title .
                 '</h3></div>
