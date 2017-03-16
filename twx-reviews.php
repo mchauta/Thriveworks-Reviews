@@ -49,9 +49,22 @@ add_action('wp_enqueue_scripts', 'reg_reviews_styles');
 
 // Creates Custom Post Type 'Reviews'
 function reviews_init() {
+    //query revies for pending ones
+    $pending_loop = new WP_Query(array(
+            'posts_per_page' => -1,
+            'post_type' => 'reviews',
+            'meta_query' => array(
+                array(
+                    'key' => 'approved',
+                    'value' => 'Pending',
+                )),
+            )
+        );
+    $pending = $pending_loop->post_count;
+    //init reviews
     $args = array(
         'labels' => array(
-            'name' => __( 'Reviews' ),
+            'name' => __( 'Reviews (' . $pending . ')'),
             'singular_name' => __( 'Review' ),
             'search_items' => 'Search Reviews',
         ),
@@ -118,6 +131,27 @@ function populate_reviews_custom_columns($column, $post_id) {
     }
     if ($column == 'rating') {
         $rating = get_field('rating', $post_id, 'raw');
+         switch ($rating) {
+            case 1:
+                $rating = ★☆☆☆☆;
+                break;
+
+            case 2:
+                $rating = ★★☆☆☆;
+                break;
+
+            case 3:
+                $rating = ★★★☆☆;
+                break;
+
+            case 4:
+                $rating = ★★★★☆;
+                break;
+
+            case 5:
+                $rating = ★★★★★;
+                break;
+        }
         echo '<p>' . $rating . '</p>';
     }
     if ($column == 'approved') {
@@ -275,7 +309,7 @@ function providers_populate_dropdown_with_posts($form){
     return $form;
 } add_filter('gform_pre_render', 'providers_populate_dropdown_with_posts');
 
-add_filter('gform_pre_render_3', 'add_readonly_script');
+add_filter('gform_pre_render', 'add_readonly_script');
 function add_readonly_script($form){
 ?>
 

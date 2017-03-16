@@ -228,7 +228,7 @@ if ($snip_location)  {
 } elseif ($snip_provider)  {
     $snip_provider_format = preg_replace('/\s+/', '_', $snip_provider);
     return '<div class ="review_be_first"> There are no reviews for this provider. <br>
-    Be the <a href="#rev_prov_' . $snip_provider_format . '">first to review </a>them.</div>';
+    Be the <a href="' . get_site_url() . '/review-providers/?redirect=redirect&provider=' .$snip_provider . '">first to review </a>them.</div>';
     }
     }
 $snip_count = $snip_loop->post_count;
