@@ -30,7 +30,7 @@ function shortcode_reviews($rev_atts) {
 //if the number and location attr exists, display that number of posts from that location
     if ($rev_number && $rev_location)  {
     //if both parameters exist
-        //find posts with both taxonomies
+        $rev_type = 'location';
         $reviews_loop = new WP_Query(array(
             'posts_per_page' => $rev_number,
             'post_type' => 'reviews',
@@ -51,6 +51,7 @@ function shortcode_reviews($rev_atts) {
         ));
 
     }  elseif ($rev_number && $rev_provider) {
+        $rev_type = 'provider';
         $reviews_loop = new WP_Query(array(
             'posts_per_page' => $rev_number,
             'post_type' => 'reviews',
@@ -118,41 +119,52 @@ $("#reviews_read_more_link_' . $ID . '").click(function(){
             $rating = get_field('rating');
             $name = get_field('first_name');
             $title = get_the_title();
+            $published = get_the_date();
+            $review_tag = get_field('review_tag');
 
         switch ($rating) {
             case 1:
-                $rating = ★☆☆☆☆;
+                $star_rating = ★☆☆☆☆;
                 break;
 
             case 2:
-                $rating = ★★☆☆☆;
+                $star_rating = ★★☆☆☆;
                 break;
 
             case 3:
-                $rating = ★★★☆☆;
+                $star_rating = ★★★☆☆;
                 break;
 
             case 4:
-                $rating = ★★★★☆;
+                $star_rating = ★★★★☆;
                 break;
 
             case 5:
-                $rating = ★★★★★;
+                $star_rating = ★★★★★;
                 break;
         }
 
+        if ($rev_type== 'provider') {
+            $item = $rev_provider;
+        } else if ($rev_type== 'location') {
+            $item = $rev_location;
+        }
             //content
             $content = $content .=
-                 '<div class="review">
-                 <div class="reviews_title"><h3>' .
+                 '<div itemscope itemtype="http://schema.org/Review" class="review">
+                 <meta itemprop="datePublished" content="' . $published . '">
+                 <meta itemprop="worstRating" content="1">
+                 <meta itemprop="bestRating" content="5">
+                 <span style="display:none;" itemprop="itemReviewed" itemscope itemtype="http://schema.org/Person">' . $item . '</span>
+                 <div itemprop="name" class="reviews_title"><h3>' .
                 $title .
                 '</h3></div>
-                <div class="reviews_rating">' .
-                $rating .
-                '</div>' .
-                '<blockquote class="reviews_content">' .
+                <div itemprop="reviewRating" itemscope itemtype="http://schema.org/Rating" class="reviews_rating"><meta itemprop="ratingValue" content="' . $rating . '">' .
+                $star_rating .
+                '</span></div>' .
+                '<blockquote itemprop="reviewBody" class="reviews_content">' .
                 $post_content . '</blockquote>
-                <div class="reviews_name"> - ' .
+                <div itemprop="author" itemscope itemtype="http://schema.org/Person" class="reviews_name"> - ' .
                 $name . '
                 </div></div>';
         if($i % 3 == 0) {
