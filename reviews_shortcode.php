@@ -170,7 +170,7 @@ $("#reviews_read_more_link_' . $ID . '").click(function(){
                 <div itemprop="author" itemscope itemtype="http://schema.org/Person" class="reviews_name"> - ' .
                 $name . '
                 </div></div>';
-        if ($i % 3 == 0 || $reviews_loop->post_count < 3) {
+        if ($i % 3 == 0) {
             $content = $content .= '</div>';
         }
         $i++;
@@ -178,8 +178,10 @@ $("#reviews_read_more_link_' . $ID . '").click(function(){
             wp_reset_postdata();
 
             }
-   // $content = $content .= '</div>';
-                return $content;
+   if ($reviews_loop->post_count < 3) {
+       $content = $content .= '</div>';
+   }
+    return $content;
         }
 
 function shortcode_reviews_snippet($snip_atts) {
