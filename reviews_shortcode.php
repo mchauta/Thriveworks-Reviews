@@ -169,7 +169,7 @@ $("#reviews_read_more_link_' . $ID . '").click(function(){
                 <div itemprop="author" itemscope itemtype="http://schema.org/Person" class="reviews_name"> - ' .
                 $name . '
                 </div></div>';
-        if($i % 3 == 0) {
+        if ($i % 3 == 0 || $reviews_loop->post_count < 3) {
             $content = $content .= '</div>';
         }
         $i++;
