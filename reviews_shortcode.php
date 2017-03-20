@@ -78,7 +78,7 @@ function shortcode_reviews($rev_atts) {
 
     if (!$reviews_loop->have_posts()) {
 
-        return 'There are currently no reviews.';
+        return '<div class="reviews_none"> There are currently no reviews.</div>';
     }
 
 
@@ -243,7 +243,7 @@ $parent = wp_get_post_parent_id($post->ID);
 
     if (!$snip_loop->have_posts()) {
 if ($snip_location)  {
-        return 'There are no reviews for this location. ';
+        return '<div class="reviews_none"> There are currently no reviews.</div>';
 } elseif ($snip_provider)  {
     $snip_provider_format = preg_replace('/\s+/', '_', $snip_provider);
     return '<div class ="review_be_first"> There are no reviews for this provider. <br>
