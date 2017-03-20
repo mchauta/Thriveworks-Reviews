@@ -195,7 +195,9 @@ function shortcode_reviews_snippet($snip_atts) {
     $snip_provider = $snip_atts['provider'];
 
 
+
     if ($snip_location)  {
+        $rev_type = 'location';
         //find posts with both taxonomies
         $snip_loop = new WP_Query(array(
             'posts_per_page' => -1,
@@ -217,6 +219,7 @@ function shortcode_reviews_snippet($snip_atts) {
         ));
 
     }  elseif ($snip_provider) {
+        $rev_type = 'provider';
         $snip_loop = new WP_Query(array(
             'posts_per_page' => -1,
             'post_type' => 'reviews',
@@ -255,39 +258,64 @@ $snip_provider_id = str_replace(' ', '_', $snip_provider);
 }
     $snip_rating_average = $snip_rating_total / $snip_count;
     $snip_rating_average = ceil($snip_rating_average);
+      if ($rev_type== 'provider') {
+            $item = $rev_provider;
+            $schema_type = 'Person';
+        } else if ($rev_type== 'location') {
+            $item = 'Thriveworks Counseling ' . $rev_location;
+            $schema_type = 'LocalBusiness';
+        }
      switch ($snip_rating_average) {
             case 1:
-                $snip_rating_average = ★☆☆☆☆;
+                $snip_rating_average_stars = ★☆☆☆☆;
                 break;
 
             case 2:
-                $snip_rating_average = ★★☆☆☆;
+                $snip_rating_average_stars = ★★☆☆☆;
                 break;
 
             case 3:
-                $snip_rating_average = ★★★☆☆;
+                $snip_rating_average_stars = ★★★☆☆;
                 break;
 
             case 4:
-                $snip_rating_average = ★★★★☆;
+                $snip_rating_average_stars = ★★★★☆;
                 break;
 
             case 5:
-                $snip_rating_average = ★★★★★;
+                $snip_rating_average_stars = ★★★★★;
                 break;
         }
 
                         if ( $snip_location ) {
-                            if (is_page_template('location.php')) {
+                            if (is_page_template('content.php')) {
                                 $parent = wp_get_post_parent_id($post->ID);
                                 $parent = get_permalink($parent);
-                                $snip_content = '<div class="reviews_snippet">' . 'Overall Rating: <span class="snip_reviews_rating">' . $snip_rating_average . '</span> based on <a href="' . $parent . '/#reviews_container">' . $snip_count . '</a> reviews.</div>';
+                                $snip_content = '<div itemscope itemtype="http://schema.org/' . $schema_type . '" class="reviews_snippet">
+                                <span itemprop="name" style="display:none">' . $item . '</span>
+                                <span itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
+                                Overall Rating: <span style="display:none;" itemprop="ratingValue">' . $snip_rating_average . '</span><span class="snip_reviews_rating">' . $snip_rating_average_stars . ' </span>based on <a itemprop="ratingCount" href="' . $parent . '/#reviews_container">' . $snip_count . '</a><div style="display:none">
+						          <span itemprop="bestRating">5</span>
+						          <span itemprop="worstRating">1</span>
+					           </div></span> reviews.</div>';
                             }
                             else {
-                                $snip_content = '<div class="reviews_snippet">' . 'Overall Rating: <span class="snip_reviews_rating">' . $snip_rating_average . '</span> based on <a href="#reviews_container">' . $snip_count . '</a> reviews.</div>';
+                                $snip_content = '<div itemscope itemtype="http://schema.org/LocalBusiness" class="reviews_snippet">
+                                <span itemprop="name" style="display:none">' . $item . '</span>
+                                <span itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
+                                Overall Rating: <span style="display:none;" itemprop="ratingValue">' . $snip_rating_average . '</span><span class="snip_reviews_rating">' . $snip_rating_average_stars . ' </span>based on <a itemprop="ratingCount" href="#reviews_container">' . $snip_count . '</a><div style="display:none">
+						          <span itemprop="bestRating">5</span>
+						          <span itemprop="worstRating">1</span>
+					           </div></span> reviews.</div>';
                             }
                         } elseif ($snip_provider) {
-                            $snip_content = '<div class="reviews_snippet">' . 'Overall Rating: <span class="snip_reviews_rating">' . $snip_rating_average . '</span> based on <a href="#reviews_' . $snip_provider_id . '">' . $snip_count . '</a> reviews.</div>';
+                             $snip_content = '<div itemscope itemtype="http://schema.org/LocalBusiness" class="reviews_snippet">
+                                <span itemprop="name" style="display:none">' . $item . '</span>
+                                <span itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
+                                Overall Rating: <span style="display:none;" itemprop="ratingValue">' . $snip_rating_average . '</span><span class="snip_reviews_rating">' . $snip_rating_average_stars . ' </span>based on <a itemprop="ratingCount" href="#reviews_' . $snip_provider_id . '">' . $snip_count . '</a><div style="display:none">
+						          <span itemprop="bestRating">5</span>
+						          <span itemprop="worstRating">1</span>
+					           </div></span> reviews.</div>';
                         }
     //$snip_content = '<div class="reviews_snippet">' . 'Overall Rating: <span class="snip_reviews_rating">' . $snip_rating_average . '</span> based on ' . $snip_count . ' reviews.</div>';
     return $snip_content;
